@@ -9,10 +9,12 @@ export class ClipboardWatcher {
    * @param {import('./store.js').Store} deps.store
    * @param {string[]} [deps.concealedFormats] formats that mean "don't record this clip"
    * @param {number} [deps.intervalMs]
+   * @param {() => void} [deps.onCapture] called after each recorded clip
    */
-  constructor({ clipboard, store, concealedFormats = [], intervalMs = 500 }) {
+  constructor({ clipboard, store, concealedFormats = [], intervalMs = 500, onCapture = () => {} }) {
     this.clipboard = clipboard;
     this.store = store;
+    this.onCapture = onCapture;
     this.concealedFormats = concealedFormats;
     this.intervalMs = intervalMs;
     this.lastSeen = '';
@@ -47,7 +49,9 @@ export class ClipboardWatcher {
       this.lastSeen = text;
       if (this.store.settings.paused) return false;
       if (await this.isConcealed()) return false;
-      return this.store.add(text) !== null;
+      const recorded = this.store.add(text) !== null;
+      if (recorded) this.onCapture();
+      return recorded;
     } finally {
       this.busy = false;
     }

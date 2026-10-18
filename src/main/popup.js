@@ -1,13 +1,17 @@
 // The history popup: a frameless window that opens near the cursor and hides on blur.
 
+import { EventEmitter } from 'node:events';
 import { app, BrowserWindow, nativeTheme, screen } from 'electron';
 import { isMac, paths, POPUP_SIZE, THEME_BACKGROUND } from './config.js';
 import { placeNear } from './geometry.js';
 
-export class Popup {
+/** Emits "shown" each time the popup opens. */
+export class Popup extends EventEmitter {
   constructor() {
+    super();
     /** @type {BrowserWindow | null} */
     this.win = null;
+    this.dialogOpen = false;
   }
 
   create() {
@@ -36,7 +40,8 @@ export class Popup {
 
     nativeTheme.on('updated', () => this.alive && this.win.setBackgroundColor(themeBackground()));
     this.win.on('blur', () => {
-      if (!this.win.webContents.isDevToolsOpened()) this.hide();
+      if (this.dialogOpen || this.win.webContents.isDevToolsOpened()) return;
+      this.hide();
     });
     // Links in clips must never navigate the popup itself.
     this.win.webContents.on('will-navigate', (e) => e.preventDefault());
@@ -54,7 +59,7 @@ export class Popup {
     return this.alive ? this.win.webContents : null;
   }
 
-  /** @param {{ view?: 'history' | 'settings' }} [opts] */
+  /** @param {{ view?: 'history' | 'settings' | 'usage' }} [opts] */
   show({ view = 'history' } = {}) {
     if (!this.alive) return;
     const cursor = screen.getCursorScreenPoint();
@@ -65,6 +70,7 @@ export class Popup {
     this.win.show();
     this.win.focus();
     this.send('window:shown', { view });
+    this.emit('shown', view);
   }
 
   hide() {
@@ -72,6 +78,17 @@ export class Popup {
     this.win.hide();
     // On macOS, hiding the app hands focus back to the app you were using.
     if (isMac) app.hide();
+  }
+
+  /** Runs a dialog without the popup hiding itself when the dialog takes focus. */
+  async withDialog(open) {
+    this.dialogOpen = true;
+    try {
+      return await open();
+    } finally {
+      this.dialogOpen = false;
+      if (this.alive && this.win.isVisible()) this.win.focus();
+    }
   }
 
   toggle() {

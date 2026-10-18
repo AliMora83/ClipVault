@@ -9,12 +9,16 @@ export class SettingsPanel {
    * @param {object} deps
    * @param {typeof window.clipvault} deps.api
    * @param {() => { settings: object, platform: string }} deps.getState
+   * @param {(view: string) => void} deps.show switches the visible view
    * @param {() => void} deps.onClose
+   * @param {() => void} deps.onOpenUsage
    */
-  constructor({ api, getState, onClose }) {
+  constructor({ api, getState, show, onClose, onOpenUsage }) {
     this.api = api;
     this.getState = getState;
+    this.show = show;
     this.onClose = onClose;
+    this.onOpenUsage = onOpenUsage;
     this.recording = false;
     this.bind();
   }
@@ -28,16 +32,14 @@ export class SettingsPanel {
   }
 
   open() {
-    $('view-history').hidden = true;
-    $('view-settings').hidden = false;
+    this.show('settings');
     this.message('');
     this.fill();
     $('close-settings').focus();
   }
 
   close() {
-    $('view-history').hidden = false;
-    $('view-settings').hidden = true;
+    this.show('history');
     this.onClose();
   }
 
@@ -52,6 +54,7 @@ export class SettingsPanel {
     $('set-login').checked = s.launchAtLogin;
     $('set-login').disabled = platform === 'linux';
     $('set-whitespace').checked = s.ignoreWhitespace;
+    $('set-track').checked = s.trackUsage;
   }
 
   message(text) {
@@ -82,6 +85,8 @@ export class SettingsPanel {
     toggle('set-paused', 'paused', 'Capture paused.', 'Capture resumed.');
     toggle('set-login', 'launchAtLogin', 'ClipVault will start when you sign in.', 'ClipVault won’t start at sign-in.');
     toggle('set-whitespace', 'ignoreWhitespace', 'Blank clips will be skipped.', 'Blank clips will be kept.');
+    toggle('set-track', 'trackUsage', 'Usage tracking on.', 'Usage tracking off. Existing counts are kept.');
+    $('open-usage').addEventListener('click', () => this.onOpenUsage());
 
     $('set-limit').addEventListener('change', (e) => {
       const n = Math.max(10, Math.min(5000, Math.round(Number(e.target.value) || 100)));

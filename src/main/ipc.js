@@ -27,4 +27,7 @@ export function registerIpc(ipcMain, { popup, store, actions }) {
   handle('history:clear', () => void store.clear({ keepPinned: true }));
   handle('window:hide', () => popup.hide());
   handle('settings:set', (patch) => actions.updateSettings(v.settingsPatch(patch)));
+  handle('stats:get', () => actions.usageOverview());
+  handle('stats:export', () => actions.exportUsage());
+  handle('stats:reset', () => actions.resetUsage());
 }

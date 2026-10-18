@@ -11,10 +11,12 @@ test('clipId accepts UUIDs and rejects anything else', () => {
   rejects(() => clipId(''));
 });
 
-test('selectOptions only allows a boolean paste flag', () => {
+test('selectOptions only allows boolean paste and viaSearch flags', () => {
   assert.deepEqual(selectOptions({ paste: true }), { paste: true });
+  assert.deepEqual(selectOptions({ paste: false, viaSearch: true }), { paste: false, viaSearch: true });
   assert.deepEqual(selectOptions(), {});
   rejects(() => selectOptions({ paste: 'yes' }));
+  rejects(() => selectOptions({ viaSearch: 1 }));
   rejects(() => selectOptions({ paste: true, run: 'rm -rf' }));
   rejects(() => selectOptions([]));
 });

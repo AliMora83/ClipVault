@@ -75,11 +75,14 @@ app.whenReady().then(async () => {
     );
   });
 
-  await step('opens and lists the clips', async () => {
-    win.show();
-    win.focus();
-    wc.send('window:shown', { view: 'history' });
+  // Opens the popup through the app's real path (a second launch shows it, like the shortcut does).
+  const openPopup = async () => {
+    app.emit('second-instance');
     await wait(400);
+  };
+
+  await step('opens and lists the clips', async () => {
+    await openPopup();
     assert.equal(await wc.executeJavaScript('document.querySelectorAll(".item").length'), 5);
     await shot('history-light');
   });
@@ -131,6 +134,36 @@ app.whenReady().then(async () => {
     const { history } = await state();
     assert.equal(history.length, 5, 'copying back must not create a duplicate');
     assert.equal(history[0].text, expected, 'the used clip moves to the top');
+  });
+
+  await step('counts usage and shows it on the Usage screen', async () => {
+    const usage = await wc.executeJavaScript('window.clipvault.getUsage()');
+    const t = usage.current.totals;
+    assert.equal(t.captured, 6, 'six non-blank copies, including the repeated link; the blank one is skipped');
+    assert.equal(t.copied, 1, 'one Shift+Enter copy-back');
+    assert.equal(t.opened, 1, 'opening the popup is counted');
+    assert.equal(usage.current.used, 1);
+
+    nativeTheme.themeSource = 'light';
+    await openPopup();
+    await press(',', [mod]);
+    await wc.executeJavaScript('document.getElementById("open-usage").click()');
+    await wait(400);
+    assert.equal(await wc.executeJavaScript('document.getElementById("view-usage").hidden'), false);
+    assert.equal(await wc.executeJavaScript('document.getElementById("u-used").textContent'), '1');
+    assert.equal(await wc.executeJavaScript('document.getElementById("u-captured").textContent'), '6');
+    assert.equal(await wc.executeJavaScript('document.querySelectorAll("#u-chart .chart-bar").length'), 1);
+    await shot('usage-light');
+    await press('Escape'); // back to Settings, where Usage was opened from
+    assert.equal(await wc.executeJavaScript('document.getElementById("view-settings").hidden'), false);
+    await press('Escape');
+    assert.equal(await wc.executeJavaScript('document.getElementById("view-history").hidden'), false);
+  });
+
+  await step('stats never contain clip text', async () => {
+    await wait(1200); // stats are saved after a 1 s debounce
+    const raw = fs.readFileSync(path.join(profile, 'stats.json'), 'utf8');
+    assert.ok(!raw.includes('github') && !raw.includes('SELECT'), 'no clip content in stats.json');
   });
 
   await step('rejects malformed IPC input', async () => {

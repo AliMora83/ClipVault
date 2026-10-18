@@ -11,13 +11,17 @@ export class TrayMenu {
    * @param {() => string | null} deps.currentHotkey
    * @param {() => void} deps.onOpen
    * @param {() => void} deps.onSettings
+   * @param {() => void} deps.onUsage
+   * @param {() => string | null} deps.usageLine e.g. "This month: 412 clips used", or null when tracking is off
    * @param {(id: string) => void} deps.onSelect
    */
-  constructor({ store, currentHotkey, onOpen, onSettings, onSelect }) {
+  constructor({ store, currentHotkey, onOpen, onSettings, onUsage, usageLine, onSelect }) {
     this.store = store;
     this.currentHotkey = currentHotkey;
     this.onOpen = onOpen;
     this.onSettings = onSettings;
+    this.onUsage = onUsage;
+    this.usageLine = usageLine;
     this.onSelect = onSelect;
 
     const icon = nativeImage.createFromPath(paths.trayIcon);
@@ -32,6 +36,7 @@ export class TrayMenu {
   update() {
     const { history, settings } = this.store;
     const hotkey = this.currentHotkey();
+    const usage = this.usageLine();
 
     const recent = history.slice(0, TRAY_MENU_ITEMS).map((clip, i) => ({
       label: `${clip.pinned ? '★ ' : ''}${preview(clip.text, 48)}`,
@@ -53,6 +58,7 @@ export class TrayMenu {
           click: (item) => this.store.updateSettings({ paused: item.checked }),
         },
         { label: 'Settings…', accelerator: 'CommandOrControl+,', registerAccelerator: false, click: this.onSettings },
+        ...(usage ? [{ label: `${usage}…`, click: this.onUsage }] : []),
         {
           label: 'Clear history (keep pinned)',
           enabled: history.some((h) => !h.pinned),

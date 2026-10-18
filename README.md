@@ -16,7 +16,8 @@ ClipVault lives in your menu bar, saves everything you copy, and pastes any earl
 - **Search, pin and quick-pick** (⌘/Ctrl + 1–9). Pinned clips are never trimmed or cleared.
 - **Respects passwords:** skips clips that password managers mark as concealed (1Password, Bitwarden, KeePassXC and others)
 - **Readable at a glance:** links and code shown in monospace and labelled; prose in the system font
-- **Local only:** history is a JSON file in your user-data folder; nothing leaves your machine
+- **Usage stats you own:** a monthly Usage screen (clips used, pasted, captured, found by search, a daily chart) and a summary notification on the 1st. Counts only, stored on your computer, exportable as CSV, and switchable off.
+- **Local only:** history and stats are JSON files in your user-data folder; nothing leaves your machine
 - Light and dark themes that follow the system; configurable shortcut, history size, pause and launch at login
 
 ## Install
@@ -76,6 +77,7 @@ src/
     index.js       wires everything together
     store.js       history + settings, persisted as JSON, emits "change"
     capture.js     ClipboardWatcher: polls, skips concealed and duplicate clips
+    stats.js       local usage counts, monthly summaries, CSV export
     popup.js       frameless window that opens at the cursor
     tray.js        menu bar / tray menu
     hotkey.js      global shortcut

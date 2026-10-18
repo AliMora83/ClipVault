@@ -1,7 +1,7 @@
 {
   "name": "clipvault",
   "productName": "ClipVault",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A FlyCut-style clipboard history manager for macOS, Windows and Linux.",
   "type": "module",
   "main": "src/main/index.js",

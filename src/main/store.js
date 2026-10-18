@@ -14,6 +14,7 @@ export const DEFAULT_SETTINGS = Object.freeze({
   launchAtLogin: false,
   ignoreWhitespace: true, // skip clips that are only spaces/newlines
   maxClipLength: 200_000, // skip huge clips (characters)
+  trackUsage: true, // count usage locally for the Usage screen (counts only, never clip text)
 });
 
 const MAX_HISTORY_LIMIT = 5000;

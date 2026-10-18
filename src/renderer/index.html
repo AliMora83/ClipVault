@@ -106,10 +106,67 @@
             <input id="set-whitespace" type="checkbox" class="switch" />
           </label>
           <div class="row">
+            <span class="row-text"><b>Usage</b><small>Your monthly numbers, counted on this computer</small></span>
+            <button id="open-usage" class="plain-btn" type="button">View usage</button>
+          </div>
+          <label class="row">
+            <span class="row-text"
+              ><b>Track usage</b><small>Counts only. What you copy is never recorded in stats.</small></span
+            >
+            <input id="set-track" type="checkbox" class="switch" />
+          </label>
+          <div class="row">
             <span class="row-text"><b>Clear history</b><small>Removes every unpinned clip</small></span>
             <button id="clear-history" class="danger" type="button">Clear</button>
           </div>
           <p id="settings-msg" class="settings-msg" role="status"></p>
+        </div>
+      </section>
+
+      <!-- Usage view -->
+      <section id="view-usage" class="view" hidden>
+        <header class="settings-head">
+          <button id="close-usage" class="icon-btn" type="button" title="Back" aria-label="Back">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+          </button>
+          <h1>Usage <span id="usage-month" class="head-sub"></span></h1>
+        </header>
+
+        <div class="usage">
+          <p id="usage-off" class="usage-note" hidden>
+            Usage tracking is off. Turn on <b>Track usage</b> in Settings to start counting.
+          </p>
+
+          <div class="tiles">
+            <div class="tile tile-hero">
+              <span class="tile-value" id="u-used">0</span>
+              <span class="tile-label">clips used this month</span>
+              <span class="tile-delta" id="u-used-delta"></span>
+            </div>
+            <div class="tile">
+              <span class="tile-value" id="u-pasted">0</span>
+              <span class="tile-label">pasted for you</span>
+            </div>
+            <div class="tile">
+              <span class="tile-value" id="u-captured">0</span>
+              <span class="tile-label">copies captured</span>
+            </div>
+          </div>
+
+          <figure class="chart-fig">
+            <figcaption class="chart-title">Clips used per day <span id="u-peak" class="chart-peak"></span></figcaption>
+            <div id="u-chart" class="chart" role="img"></div>
+            <div id="u-tooltip" class="chart-tip" role="status" hidden></div>
+          </figure>
+
+          <p id="u-facts" class="usage-facts"></p>
+
+          <div class="usage-actions">
+            <p class="usage-note">Counted on this computer only. Clip text is never part of your stats.</p>
+            <button id="u-export" class="plain-btn" type="button">Export CSV</button>
+            <button id="u-reset" class="danger" type="button">Reset</button>
+          </div>
+          <p id="usage-msg" class="settings-msg" role="status"></p>
         </div>
       </section>
     </div>

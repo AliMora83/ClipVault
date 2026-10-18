@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0
+
+- **Usage stats**, counted on your computer only: clips used, pasted, captured, popup opens and clips found by search. Clip text is never part of the stats.
+- **Usage screen** (Settings → View usage, or the menu bar): this month's totals, last month for comparison, a daily chart with hover details, CSV export and reset.
+- **Monthly summary notification** on the first day of each month.
+- "This month: N clips used" in the menu bar menu.
+- **Track usage** switch in Settings.
+
 ## 0.2.0
 
 - Paste with a native keystroke on macOS and Windows, like FlyCut. macOS now needs only the Accessibility permission.

@@ -3,6 +3,7 @@
 import { $ } from './dom.js';
 import { ClipList } from './clip-list.js';
 import { SettingsPanel } from './settings-panel.js';
+import { UsagePanel } from './usage-panel.js';
 import { resolveKey } from './keymap.js';
 import { filterClips } from '../shared/format.js';
 
@@ -21,10 +22,18 @@ const list = new ClipList($('list'), {
   onDelete: (clip) => api.remove(clip.id),
 });
 
+/** Shows exactly one of the popup's views. */
+function showView(name) {
+  for (const v of ['history', 'settings', 'usage']) $(`view-${v}`).hidden = v !== name;
+}
+
+const usage = new UsagePanel({ api, show: showView });
 const settings = new SettingsPanel({
   api,
   getState: () => view.state,
+  show: showView,
   onClose: () => $('search').focus(),
+  onOpenUsage: () => usage.open('settings'),
 });
 
 // ---------- Rendering ----------
@@ -60,7 +69,7 @@ function renderEmpty(isEmpty) {
 
 function choose(index, paste) {
   const clip = list.clips[index];
-  if (clip) api.select(clip.id, { paste: Boolean(paste) });
+  if (clip) api.select(clip.id, { paste: Boolean(paste), viaSearch: view.query.trim() !== '' });
 }
 
 function setFilter(filter) {
@@ -85,15 +94,24 @@ function onShown({ view: which = 'history' } = {}) {
   list.resetPointer();
   view.query = '';
   $('search').value = '';
-  if (settings.isOpen) settings.close();
+  showView('history');
   setFilter('all');
   if (which === 'settings') settings.open();
+  else if (which === 'usage') usage.open('history');
   else $('search').focus();
 }
 
 // ---------- Keyboard ----------
 
 document.addEventListener('keydown', (e) => {
+  if (usage.isOpen) {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      usage.close();
+      if (settings.isOpen) settings.fill();
+    }
+    return;
+  }
   if (settings.isOpen) {
     if (e.key === 'Escape' && !settings.recording) {
       e.preventDefault();
@@ -153,5 +171,5 @@ api.getState().then((state) => {
 
 // Keep "2 min ago" labels fresh while the popup is open.
 setInterval(() => {
-  if (document.visibilityState === 'visible' && !settings.isOpen) render();
+  if (document.visibilityState === 'visible' && !settings.isOpen && !usage.isOpen) render();
 }, 30_000);

@@ -28,8 +28,8 @@ export function selectOptions(value = {}) {
   if (!isPlainObject(value)) fail('Invalid select options');
   const out = {};
   for (const [k, v] of Object.entries(value)) {
-    if (k !== 'paste') fail(`Unknown select option "${k}"`);
-    out.paste = bool(v);
+    if (k !== 'paste' && k !== 'viaSearch') fail(`Unknown select option "${k}"`);
+    out[k] = bool(v);
   }
   return out;
 }

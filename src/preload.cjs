@@ -11,6 +11,9 @@ contextBridge.exposeInMainWorld('clipvault', {
   clear: () => ipcRenderer.invoke('history:clear'),
   hide: () => ipcRenderer.invoke('window:hide'),
   setSettings: (patch) => ipcRenderer.invoke('settings:set', patch),
+  getUsage: () => ipcRenderer.invoke('stats:get'),
+  exportUsage: () => ipcRenderer.invoke('stats:export'),
+  resetUsage: () => ipcRenderer.invoke('stats:reset'),
   onState: (cb) => ipcRenderer.on('state:changed', (_e, state) => cb(state)),
   onShown: (cb) => ipcRenderer.on('window:shown', (_e, opts) => cb(opts ?? {})),
 });
