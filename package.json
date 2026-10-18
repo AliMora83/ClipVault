@@ -1,0 +1,87 @@
+{
+  "name": "clipvault",
+  "productName": "ClipVault",
+  "version": "0.2.0",
+  "description": "A FlyCut-style clipboard history manager for macOS, Windows and Linux.",
+  "type": "module",
+  "main": "src/main/index.js",
+  "author": "Ali Mora",
+  "license": "MIT",
+  "homepage": "https://github.com/AliMora83/ClipVault#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AliMora83/ClipVault.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AliMora83/ClipVault/issues"
+  },
+  "engines": {
+    "node": ">=20.11"
+  },
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test \"test/unit/**/*.test.js\"",
+    "test:e2e": "electron test/e2e/smoke.js",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run lint && npm run format:check && npm test",
+    "dist": "electron-builder",
+    "release": "electron-builder --publish always"
+  },
+  "dependencies": {
+    "koffi": "^3.3.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "electron": "^44.9.0",
+    "electron-builder": "^26.0.0",
+    "eslint": "^10.13.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.10"
+  },
+  "build": {
+    "appId": "com.alimora.clipvault",
+    "productName": "ClipVault",
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/koffi/**",
+      "node_modules/@koromix/**"
+    ],
+    "publish": [
+      {
+        "provider": "github"
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "assets/icon.png",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "extendInfo": {
+        "LSUIElement": true,
+        "NSAppleEventsUsageDescription": "ClipVault pastes your selected clip into the app you were using."
+      }
+    },
+    "win": {
+      "icon": "assets/icon.png",
+      "target": [
+        "nsis"
+      ]
+    },
+    "linux": {
+      "icon": "assets/icon.png",
+      "target": [
+        "AppImage"
+      ],
+      "category": "Utility"
+    }
+  }
+}

@@ -1,0 +1,533 @@
+/* ClipVault — "carbon copy" theme.
+   Paper and ink, with one strong accent: carbon-copy indigo marks the selected slip.
+   Text colours are chosen for contrast: --ink ≥ 15:1, --ink-2 ≥ 6:1, --ink-3 ≥ 4.5:1. */
+:root {
+  --paper: #fbfbfd;
+  --sheet: #f0f0f5;
+  --rule: #e3e3ea;
+  --ink: #14151a;
+  --ink-2: #565867;
+  --ink-3: #6b6d7c;
+  --carbon: #3b39c9;
+  --carbon-ink: #ffffff;
+  --carbon-tint: rgba(59, 57, 201, 0.09);
+  --mark: rgba(59, 57, 201, 0.16);
+  --pin: #a86b00;
+  --danger: #c22d2d;
+  --focus: rgba(59, 57, 201, 0.35);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #17171b;
+    --sheet: #222228;
+    --rule: #2f2f38;
+    --ink: #f3f3f6;
+    --ink-2: #b4b5c1;
+    --ink-3: #9495a3;
+    --carbon: #4f4de0;
+    --carbon-tint: rgba(120, 118, 255, 0.12);
+    --mark: rgba(140, 138, 255, 0.3);
+    --pin: #f2b632;
+    --danger: #ff6b6b;
+    --focus: rgba(140, 138, 255, 0.45);
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html,
+body {
+  height: 100%;
+  background: var(--paper);
+}
+body {
+  color: var(--ink);
+  font:
+    13px/1.45 -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI Variable Text',
+    'Segoe UI',
+    system-ui,
+    sans-serif;
+  overflow: hidden;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+button {
+  font: inherit;
+  color: inherit;
+}
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+.app {
+  height: 100vh;
+  overflow: hidden;
+  background: var(--paper);
+}
+.view {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.view[hidden] {
+  display: none;
+}
+
+/* ---------- Search: a big, quiet input, like a line on a page ---------- */
+.top {
+  -webkit-app-region: drag;
+}
+.top input,
+.top button {
+  -webkit-app-region: no-drag;
+}
+.search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 52px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-3);
+}
+.search svg {
+  width: 18px;
+  height: 18px;
+}
+.search input {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  caret-color: var(--carbon);
+}
+.search input::placeholder {
+  color: var(--ink-3);
+}
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--pin);
+  background: color-mix(in srgb, var(--pin) 14%, transparent);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+/* ---------- Tabs ---------- */
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px 4px 12px;
+}
+.tab {
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  font-weight: 500;
+  padding: 4px 9px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.tab span {
+  color: var(--ink-3);
+  margin-left: 4px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+}
+.tab:hover {
+  color: var(--ink);
+}
+.tab.active {
+  color: var(--ink);
+  background: var(--sheet);
+}
+.tab.active span {
+  color: var(--ink-2);
+}
+.spacer {
+  flex: 1;
+}
+.icon-btn {
+  border: 0;
+  background: transparent;
+  color: var(--ink-3);
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.icon-btn:hover {
+  background: var(--sheet);
+  color: var(--ink);
+}
+
+/* ---------- Clip list ---------- */
+.list {
+  list-style: none;
+  flex: 1;
+  overflow-y: auto;
+  padding: 2px 8px 8px;
+}
+.list[hidden] {
+  display: none;
+}
+.list::-webkit-scrollbar {
+  width: 8px;
+}
+.list::-webkit-scrollbar-thumb {
+  background: var(--rule);
+  border-radius: 4px;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: default;
+  position: relative;
+}
+.item + .item {
+  margin-top: 1px;
+}
+.item:hover {
+  background: var(--carbon-tint);
+}
+.body {
+  min-width: 0;
+}
+.text {
+  color: var(--ink);
+  font-size: 13.5px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.item.kind-code .text,
+.item.kind-link .text {
+  font:
+    12.5px/1.45 ui-monospace,
+    'SF Mono',
+    'Cascadia Code',
+    Menlo,
+    Consolas,
+    monospace;
+}
+.item.kind-link .text {
+  -webkit-line-clamp: 1;
+  word-break: break-all;
+}
+.text mark {
+  background: var(--mark);
+  color: inherit;
+  border-radius: 3px;
+  padding: 0 1px;
+}
+.meta {
+  color: var(--ink-2);
+  font-size: 11.5px;
+  margin-top: 3px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.meta .kind {
+  color: var(--ink-3);
+}
+.meta .key {
+  margin-left: auto;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Pinned clips carry a small amber tab on their edge */
+.item.pinned::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--pin);
+}
+
+.actions {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+}
+.item:hover .actions,
+.item.selected .actions {
+  opacity: 1;
+}
+.act {
+  border: 0;
+  background: transparent;
+  color: var(--ink-3);
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.act svg {
+  width: 15px;
+  height: 15px;
+}
+.act:hover {
+  background: var(--sheet);
+  color: var(--ink);
+}
+.act.pin.on {
+  color: var(--pin);
+}
+.act.pin.on svg {
+  fill: currentColor;
+}
+.act.del:hover {
+  color: var(--danger);
+}
+
+/* The selected slip: solid carbon indigo. The one loud thing on screen. */
+.item.selected {
+  background: var(--carbon);
+}
+.item.selected .text,
+.item.selected .text mark {
+  color: var(--carbon-ink);
+}
+.item.selected .text mark {
+  background: rgba(255, 255, 255, 0.24);
+}
+.item.selected .meta,
+.item.selected .meta .kind,
+.item.selected .meta .key {
+  color: rgba(255, 255, 255, 0.8);
+}
+.item.selected .act {
+  color: rgba(255, 255, 255, 0.85);
+}
+.item.selected .act:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+.item.selected .act.pin.on {
+  color: #fff;
+}
+.item.selected.pinned::before {
+  background: #fff;
+}
+
+/* ---------- Empty state ---------- */
+.empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  gap: 6px;
+}
+.empty[hidden] {
+  display: none;
+}
+.empty-title {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ink);
+}
+.empty-sub {
+  color: var(--ink-2);
+  max-width: 300px;
+}
+
+/* ---------- Shortcut hints ---------- */
+.hints {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  justify-content: center;
+  padding: 9px 12px;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-2);
+  font-size: 11.5px;
+}
+.hints b {
+  font-weight: 400;
+}
+kbd {
+  display: inline-block;
+  min-width: 18px;
+  text-align: center;
+  font:
+    500 11px/18px -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    system-ui,
+    sans-serif;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 0 4px;
+  margin-right: 3px;
+  color: var(--ink);
+}
+
+/* ---------- Settings ---------- */
+.settings-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 52px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--rule);
+  -webkit-app-region: drag;
+}
+.settings-head button {
+  -webkit-app-region: no-drag;
+}
+.settings-head h1 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.settings {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 16px 14px;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.row-text b {
+  font-weight: 500;
+  color: var(--ink);
+}
+.row-text small {
+  color: var(--ink-2);
+  font-size: 12px;
+}
+.row input[type='number'],
+.hotkey {
+  width: 130px;
+  height: 30px;
+  border-radius: 7px;
+  border: 1px solid var(--rule);
+  background: var(--sheet);
+  color: var(--ink);
+  font: inherit;
+  padding: 0 8px;
+  text-align: center;
+  outline: 0;
+}
+.hotkey {
+  cursor: pointer;
+}
+.hotkey.recording {
+  border-color: var(--carbon);
+  box-shadow: 0 0 0 3px var(--focus);
+}
+.row input:focus {
+  border-color: var(--carbon);
+}
+
+.switch {
+  appearance: none;
+  width: 36px;
+  height: 21px;
+  border-radius: 11px;
+  background: var(--rule);
+  position: relative;
+  cursor: pointer;
+  flex: none;
+  transition: background 0.15s;
+}
+.switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s;
+}
+.switch:checked {
+  background: var(--carbon);
+}
+.switch:checked::after {
+  transform: translateX(15px);
+}
+.switch:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.danger {
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--danger);
+  font-weight: 500;
+  padding: 5px 14px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+.danger:hover {
+  background: var(--sheet);
+}
+.settings-msg {
+  color: var(--ink-2);
+  font-size: 12px;
+  min-height: 18px;
+  padding-top: 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
