@@ -1,7 +1,7 @@
 {
   "name": "clipvault",
   "productName": "ClipVault",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A FlyCut-style clipboard history manager for macOS, Windows and Linux.",
   "type": "module",
   "main": "src/main/index.js",
@@ -62,8 +62,20 @@
       "category": "public.app-category.productivity",
       "icon": "assets/icon.png",
       "target": [
-        "dmg",
-        "zip"
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
       ],
       "extendInfo": {
         "LSUIElement": true,

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.1
+
+- **Intel Mac builds**: releases now include `x64` installers alongside Apple Silicon (`arm64`).
+- Picking a clip from the menu bar pastes it into the app you were using, like the ⌘⇧V popup.
+
 ## 0.3.0
 
 - **Usage stats**, counted on your computer only: clips used, pasted, captured, popup opens and clips found by search. Clip text is never part of the stats.
