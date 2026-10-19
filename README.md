@@ -31,6 +31,8 @@ npm install
 npm start
 ```
 
+On macOS, pick the `arm64` file for Apple Silicon Macs and the `x64` file for Intel Macs.
+
 The builds are not code-signed yet. On macOS, right-click the app and choose **Open** the first time.
 
 ### Paste permission
