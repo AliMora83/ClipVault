@@ -12,7 +12,7 @@ ClipVault lives in your menu bar, saves everything you copy, and pastes any earl
 ## Features
 
 - **Background capture** of every text copy, from any app, with duplicates moved to the top instead of piling up
-- **One shortcut to paste**: ⌘⇧V (Ctrl+Shift+V), arrow to a clip, Enter. It pastes straight into the app you came from.
+- **One shortcut to paste**: ⌘⇧V (Ctrl+Shift+V), arrow to a clip, Enter. It pastes straight into the app you came from. Picking a clip from the menu bar pastes too.
 - **Search, pin and quick-pick** (⌘/Ctrl + 1–9). Pinned clips are never trimmed or cleared.
 - **Respects passwords:** skips clips that password managers mark as concealed (1Password, Bitwarden, KeePassXC and others)
 - **Readable at a glance:** links and code shown in monospace and labelled; prose in the system font
