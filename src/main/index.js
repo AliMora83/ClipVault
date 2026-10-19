@@ -47,7 +47,7 @@ async function start() {
     onOpen: () => popup.show(),
     onSettings: () => popup.show({ view: 'settings' }),
     onUsage: () => popup.show({ view: 'usage' }),
-    onSelect: (id) => selectClip(id, { paste: false }),
+    onSelect: (id) => selectClip(id, { paste: store.settings.pasteAfterSelect }),
   });
 
   registerIpc(ipcMain, {

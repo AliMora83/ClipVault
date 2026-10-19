@@ -9,7 +9,7 @@ import crypto from 'node:crypto';
 export const DEFAULT_SETTINGS = Object.freeze({
   historyLimit: 100, // max unpinned clips kept
   hotkey: 'CommandOrControl+Shift+V',
-  pasteAfterSelect: true, // Enter pastes into the previous app (needs OS permission)
+  pasteAfterSelect: true, // choosing a clip (popup or menu bar) pastes into the previous app (needs OS permission)
   paused: false, // stop capturing
   launchAtLogin: false,
   ignoreWhitespace: true, // skip clips that are only spaces/newlines

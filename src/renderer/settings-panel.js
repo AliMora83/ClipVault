@@ -81,7 +81,12 @@ export class SettingsPanel {
 
     const toggle = (id, key, on, off = on) =>
       $(id).addEventListener('change', (e) => this.save({ [key]: e.target.checked }, e.target.checked ? on : off));
-    toggle('set-paste', 'pasteAfterSelect', 'Enter will paste into your app.', 'Enter will copy only.');
+    toggle(
+      'set-paste',
+      'pasteAfterSelect',
+      'Choosing a clip will paste it into your app.',
+      'Choosing a clip will copy it only.',
+    );
     toggle('set-paused', 'paused', 'Capture paused.', 'Capture resumed.');
     toggle('set-login', 'launchAtLogin', 'ClipVault will start when you sign in.', 'ClipVault won’t start at sign-in.');
     toggle('set-whitespace', 'ignoreWhitespace', 'Blank clips will be skipped.', 'Blank clips will be kept.');
