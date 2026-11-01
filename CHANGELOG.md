@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.2
+
+- **Fixed double paste** (#3): a held Enter key or a quick double pick could paste the same clip twice. Selections now go through one at a time.
+- CI: the end-to-end test no longer fails when a headless runner can't take a screenshot.
+
 ## 0.3.1
 
 - **Intel Mac builds**: releases now include `x64` installers alongside Apple Silicon (`arm64`).

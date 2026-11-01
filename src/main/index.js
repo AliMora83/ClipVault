@@ -12,6 +12,7 @@ import { Popup } from './popup.js';
 import { TrayMenu } from './tray.js';
 import { Hotkey } from './hotkey.js';
 import { registerIpc } from './ipc.js';
+import { SelectGuard } from './select-guard.js';
 import { pasteIntoFrontApp } from './paste.js';
 import { explainPasteFailure } from './permissions.js';
 import { prettyHotkey } from '../shared/format.js';
@@ -79,7 +80,14 @@ function snapshot() {
   return { history, settings, platform, hotkeyActive: Boolean(ctx.hotkey.current) };
 }
 
-async function selectClip(id, { paste = false, viaSearch = false } = {}) {
+const selectGuard = new SelectGuard();
+
+/** Copies a clip back to the clipboard and optionally pastes it. One at a time (see select-guard.js). */
+function selectClip(id, opts = {}) {
+  return selectGuard.run(() => copyAndPaste(id, opts));
+}
+
+async function copyAndPaste(id, { paste = false, viaSearch = false } = {}) {
   const clip = ctx.store.touch(id);
   if (!clip) return;
   ctx.watcher.ignore(clip.text); // our own write isn't a new copy

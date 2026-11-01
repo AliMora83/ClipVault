@@ -67,9 +67,15 @@ function renderEmpty(isEmpty) {
 
 // ---------- Actions ----------
 
+// One pick per opening: the popup hides after a pick, and repeats are ignored until it opens again.
+let picked = false;
+
 function choose(index, paste) {
   const clip = list.clips[index];
-  if (clip) api.select(clip.id, { paste: Boolean(paste), viaSearch: view.query.trim() !== '' });
+  if (!clip || picked) return;
+  picked = true;
+  setTimeout(() => (picked = false), 1000); // safety: re-arm if the popup didn't close
+  api.select(clip.id, { paste: Boolean(paste), viaSearch: view.query.trim() !== '' });
 }
 
 function setFilter(filter) {
@@ -91,6 +97,7 @@ function setQuery(query) {
 }
 
 function onShown({ view: which = 'history' } = {}) {
+  picked = false;
   list.resetPointer();
   view.query = '';
   $('search').value = '';
@@ -130,8 +137,10 @@ document.addEventListener('keydown', (e) => {
     case 'jump':
       return list.select(action.to === 'first' ? 0 : list.clips.length - 1);
     case 'choose':
+      if (e.repeat) return; // a held Enter auto-repeats; act on the first press only
       return choose(list.selected, action.paste === 'default' ? view.state.settings.pasteAfterSelect : false);
     case 'pick':
+      if (e.repeat) return;
       return choose(action.index, view.state.settings.pasteAfterSelect);
     case 'pin':
       return list.current && api.pin(list.current.id, !list.current.pinned);
