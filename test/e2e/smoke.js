@@ -46,7 +46,12 @@ app.whenReady().then(async () => {
   const shot = async (name) => {
     if (!shotsDir) return;
     fs.mkdirSync(shotsDir, { recursive: true });
-    fs.writeFileSync(path.join(shotsDir, `${name}.png`), (await win.capturePage()).toPNG());
+    try {
+      fs.writeFileSync(path.join(shotsDir, `${name}.png`), (await win.capturePage()).toPNG());
+    } catch (err) {
+      // Screenshots are a debugging aid; headless CI GPUs sometimes fail to capture.
+      console.warn(`screenshot "${name}" skipped: ${err.message}`);
+    }
   };
   const mod = process.platform === 'darwin' ? 'meta' : 'control';
 
@@ -127,7 +132,10 @@ app.whenReady().then(async () => {
       '[...document.querySelectorAll(".item .text")].map((e) => e.textContent)[1]',
     );
     await press('Down');
-    await press('Return', ['shift']);
+    // A held Enter: first press plus an auto-repeat. Must act once (issue #3); the usage step checks copied === 1.
+    wc.sendInputEvent({ type: 'keyDown', keyCode: 'Return', modifiers: ['shift'] });
+    wc.sendInputEvent({ type: 'keyDown', keyCode: 'Return', modifiers: ['shift', 'isAutoRepeat'] });
+    wc.sendInputEvent({ type: 'keyUp', keyCode: 'Return', modifiers: ['shift'] });
     await wait(600);
     assert.equal(await clipboard.readText(), expected);
     assert.equal(win.isVisible(), false);
@@ -164,6 +172,16 @@ app.whenReady().then(async () => {
     await wait(1200); // stats are saved after a 1 s debounce
     const raw = fs.readFileSync(path.join(profile, 'stats.json'), 'utf8');
     assert.ok(!raw.includes('github') && !raw.includes('SELECT'), 'no clip content in stats.json');
+  });
+
+  await step('simultaneous selections paste once', async () => {
+    const before = (await wc.executeJavaScript('window.clipvault.getUsage()')).current.totals.copied;
+    const id = (await state()).history[1].id;
+    await wc.executeJavaScript(
+      `Promise.all([1, 2, 3].map(() => window.clipvault.select(${JSON.stringify(id)}, { paste: false })))`,
+    );
+    const after = (await wc.executeJavaScript('window.clipvault.getUsage()')).current.totals.copied;
+    assert.equal(after - before, 1);
   });
 
   await step('rejects malformed IPC input', async () => {
