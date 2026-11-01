@@ -163,6 +163,11 @@ for (const tab of document.querySelectorAll('.tab')) {
   });
 }
 $('open-settings').addEventListener('click', () => settings.open());
+$('close-popup').addEventListener('click', () => api.hide());
+// Keep typing and Esc working: whenever the window gets focus, put it in the search box.
+window.addEventListener('focus', () => {
+  if (!settings.isOpen && !usage.isOpen) $('search').focus();
+});
 
 // ---------- State from the main process ----------
 

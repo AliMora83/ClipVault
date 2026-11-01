@@ -7,6 +7,10 @@ import { DEFAULT_SETTINGS } from '../../src/main/store.js';
 
 test('clipKind recognises links, emails, code and prose', () => {
   assert.deepEqual(clipKind('https://www.github.com/termit/Flycut'), { type: 'link', label: 'Link to github.com' });
+  assert.deepEqual(clipKind('linkedin.com/in/someone'), { type: 'link', label: 'Link to linkedin.com' });
+  assert.deepEqual(clipKind('www.Openmindi.co.za'), { type: 'link', label: 'Link to openmindi.co.za' });
+  assert.equal(clipKind('config.js').type, 'text', 'file names are not links');
+  assert.equal(clipKind('see example.com for details').type, 'text');
   assert.equal(clipKind('ali@example.com').type, 'email');
   assert.equal(clipKind('const total = items.reduce((sum, i) => sum + i.price, 0);').type, 'code');
   assert.equal(clipKind('SELECT * FROM clips WHERE pinned = 1').type, 'code');

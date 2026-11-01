@@ -69,6 +69,7 @@ export class Popup extends EventEmitter {
     if (isMac) app.focus({ steal: true });
     this.win.show();
     this.win.focus();
+    this.win.webContents.focus(); // keyboard focus inside the page, so Esc and typing reach it
     this.send('window:shown', { view });
     this.emit('shown', view);
   }

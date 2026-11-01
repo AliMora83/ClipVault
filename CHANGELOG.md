@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.3
+
+- **Close button** in the popup, for when Esc doesn't reach it. The popup now also takes keyboard focus every time it opens, so Esc and typing work straight away.
+- Bare web addresses such as `linkedin.com/in/name` are recognised as links.
+
 ## 0.3.2
 
 - **Fixed double paste** (#3): a held Enter key or a quick double pick could paste the same clip twice. Selections now go through one at a time.

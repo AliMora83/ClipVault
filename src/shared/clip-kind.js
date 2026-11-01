@@ -2,6 +2,10 @@
 // Shared by the main process and the renderer; keep it free of Node and DOM APIs.
 
 const LINK = /^https?:\/\/\S+$/i;
+// A bare web address such as "linkedin.com/in/name" or "openmindi.co.za": common endings only,
+// so a file name like "config.js" isn't mistaken for a link.
+const BARE_LINK =
+  /^(www\.)?([a-z0-9-]+\.)+(com|net|org|io|dev|app|ai|co|me|africa|cloud|za|uk|design|xyz|info|biz)(\/\S*)?$/i;
 const EMAIL = /^[\w.+-]+@[\w-]+(\.[\w-]+)+$/;
 const SQL = /^\s*(SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|WITH)\s/i;
 const CODE_SIGNALS = [
@@ -26,6 +30,13 @@ export function clipKind(text) {
       // malformed URL: still a link, just without a host label
     }
     return { type: 'link', label: host ? `Link to ${host}` : 'Link' };
+  }
+  if (BARE_LINK.test(t)) {
+    const host = t
+      .split('/')[0]
+      .replace(/^www\./i, '')
+      .toLowerCase();
+    return { type: 'link', label: `Link to ${host}` };
   }
   if (EMAIL.test(t)) return { type: 'email', label: 'Email address' };
   if (SQL.test(t)) return { type: 'code', label: 'Code' };

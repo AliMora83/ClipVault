@@ -102,7 +102,7 @@ button {
   align-items: center;
   gap: 10px;
   height: 52px;
-  padding: 0 16px;
+  padding: 0 10px 0 16px;
   border-bottom: 1px solid var(--rule);
   color: var(--ink-3);
 }
@@ -691,4 +691,9 @@ kbd {
 }
 .usage-actions .usage-note {
   flex: 1;
+}
+
+#close-popup svg {
+  width: 16px;
+  height: 16px;
 }

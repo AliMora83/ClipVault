@@ -191,6 +191,14 @@ app.whenReady().then(async () => {
     assert.match(err, /must be a number/);
   });
 
+  await step('the close button hides the popup', async () => {
+    await openPopup();
+    assert.equal(win.isVisible(), true);
+    await wc.executeJavaScript('document.getElementById("close-popup").click()');
+    await wait(300);
+    assert.equal(win.isVisible(), false);
+  });
+
   await step('renderer logged no errors', async () => {
     assert.deepEqual(rendererErrors, []);
   });
